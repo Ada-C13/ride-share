@@ -106,7 +106,6 @@ def total_money_made(drivers)
     end
     puts "The total amount of money driver ID:#{driver[:id]} has made is $#{total_cost}."
   end
-  # return
 end
 
 # 3 The average rating for each driver
@@ -119,7 +118,6 @@ def average_rating(drivers)
     average = (total_rating / driver[:rides].length)
     puts "The average rating for driver ID: #{driver[:id]} is #{average}."
   end
-  return
 end
 
 # 4 Which driver made the most money?
@@ -218,8 +216,6 @@ def most_money_date(drivers)
     puts "Driver ID:#{driver_and_money[:id]}, made the most money of $#{driver_and_money[:most_money]} on #{driver_and_money[:date]}."
   end
 end
-
-#   return " Driver ID: #{driver[:id]}, makes the most amount of money of $#{most_money[:cost]} on #{most_money[:date]}."
 
 total_rides(drivers)
 puts " "
