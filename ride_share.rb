@@ -11,8 +11,8 @@ my_company = [
       },
       {
         date: "3rd Feb 2016",
-        cost: 30
-        ride_id:"RD0015"
+        cost: 30,
+        ride_id:"RD0015",
         rating: 4
       },
       {
