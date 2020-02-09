@@ -102,26 +102,61 @@ def print_sign(num, sign)
 end 
 
 
-# Create a method named <hash_iterator> 
-def hash_iterator(hash, sign)
+def get_total(array, key_sym) 
+  total = 0.0 
+  array.each do |ride|
+    total += ride[key_sym]
+  end 
+  return total
+end 
+
+
+def get_average(sum, size)
+  return (sum / size).round(1)
+end 
+
+
+def get_highest_earning_date(array)
+  highest_earning = 0
+  date = ""
+
+  array.each do |ride| 
+    if ride[:cost] > highest_earning 
+      highest_earning = ride[:cost] 
+      date = ride[:date]
+    end  
+  end
+
+  return [date, highest_earning]
+end 
+
+
+# Create a method named <print_output_per_driver> 
+def print_output_per_driver(hash, sign)
   output = ""
 
   # Iterate over hash to collect output
-  hash.each_with_index do |(driver_id, num), i|
-    output += "   Driver ##{i + 1} (#{driver_id}) - #{print_sign(num, sign)}\n"
+  hash.each_with_index do |(driver_id, data), i|
+    if data.class == Integer || data.class == Float 
+      output += "   Driver ##{i + 1} (#{driver_id}) - #{print_sign(data, sign)}\n"
+    elsif data.class == Array 
+      date = data[0]
+      most_money = data[1]
+      output += "   Driver ##{i + 1} (#{driver_id}) - On #{date}, made the most money, #{print_sign(most_money, sign)}.\n"
+    end
   end  
 
   return output
 end 
 
 
-# Create a method to get <highest_value> with corresponding "driver id"
-def highest_value(hash, keyword, sign)
+# Create a method to get <print_highest_value> with corresponding "driver id"
+def print_highest_value(hash, keyword, sign)
   highest_num = hash.values.max
   
-  hash.each do |driver_id, num|    
+  hash.each_with_index do |(driver_id, num), i|    
     if num == highest_num
-      return "   Driver ##{driver_id[-1]} (#{driver_id}) made the #{keyword}, #{print_sign(num, sign)}."
+      return "   Driver ##{i + 1} (#{driver_id}) made the #{keyword}, #{print_sign(num, sign)}."
       break
     end 
   end 
@@ -132,98 +167,87 @@ end
 # (i.e results)
 # results = {
 #   :number_of_rides=>{:DR0001=>3, :DR0002=>3, :DR0003=>2, :DR0004=>3}, 
-#   :total_money=>{:DR0001=>85, :DR0002=>75, :DR0003=>55, :DR0004=>35}, 
+#   :total_money=>{:DR0001=>85.0, :DR0002=>75.0, :DR0003=>55.0, :DR0004=>35.0}, 
 #   :average_rating=>{:DR0001=>3, :DR0002=>3, :DR0003=>3.5, :DR0004=>4.7}, 
-#   :most_money_made_date=>{:DR0001=>["5th Feb 2016", 45], :DR0002=>["5th Feb 2016", 35], :DR0003=>["5th Feb 2016", 50], :DR0004=>["5th Feb 2016", 20]}
+#   :highest_earning_date=>{:DR0001=>["5th Feb 2016", 45], :DR0002=>["5th Feb 2016", 35], :DR0003=>["5th Feb 2016", 50], :DR0004=>["5th Feb 2016", 20]}
 # }
 results = {} 
 
 # Create 4 empty hashes to collect data for each 
-num_of_rides_hash = {}
-total_money_hash = {}
-avg_rating_hash = {} 
-most_money_made_date = {} 
+rides_hash = {}
+costs_hash = {}
+ratings_hash = {} 
+highest_earning_dates_hash = {} 
 
 
 # Iterate over <drivers> hash to calculate and collect data into <results> hash
 drivers.each_with_index do |(driver_id, ride_info_arr), i| 
 
-  # Collect data for "1. The number of rides per driver"
-  num_of_rides_hash[driver_id] = ride_info_arr.length
-  results[:number_of_rides] = num_of_rides_hash 
-  
-
-  # Create 4 variables named <total_cost>, <total_rating>, <most_money> and <date>.
-  total_cost = 0
-  total_rating = 0.0
-
-  most_money = 0
-  date = ""
-
-  # Iterate over <ride_info_arr> to calculate each data
-  ride_info_arr.each do |ride| 
-    total_cost += ride[:cost]
-    total_rating += ride[:rating]
-
-    most_money = ride[:cost]
-    date = ride[:date]
-  end 
+  # Get <total_cost>, <avg_rating>, <highest_earning_date> by calling each method
+  total_cost = get_total(ride_info_arr, :cost) 
+  total_rating = get_total(ride_info_arr, :rating)
+  avg_rating = get_average(total_rating, ride_info_arr.length)
+  highest_earning_date = get_highest_earning_date(ride_info_arr)
 
 
-  # Collect data for "2. The total money per driver"
-  total_money_hash[driver_id] = total_cost
-  results[:total_money] = total_money_hash 
+  # Collect data into <results> hash for the following questions 
+  # 1. The number of rides per driver
+  # 2. The total money per driver
+  # 3. The average rating per driver
+  # 6. The highest earning date per driver
 
-  # Collect data for "3. The average rating per driver"
-  avg_rating = (total_rating / ride_info_arr.length).round(1)
-  avg_rating_hash[driver_id] = integer_and_float(avg_rating)
-  results[:average_rating] = avg_rating_hash 
+  rides_hash[driver_id] = ride_info_arr.length
+  costs_hash[driver_id] = total_cost
+  ratings_hash[driver_id] = integer_and_float(avg_rating)
+  highest_earning_dates_hash[driver_id] = highest_earning_date
 
-  # Collect data for "6. The highest earning date per driver"
-  most_money_made_date[driver_id] = [date, most_money]
-  results[:most_money_made_date] = most_money_made_date
+  results[:number_of_rides] = rides_hash 
+  results[:total_money] = costs_hash 
+  results[:average_rating] = ratings_hash 
+  results[:highest_earning_date] = highest_earning_dates_hash
 end 
 
 
-# Invoke <hash_iterator> method to print 3 following data 
+
+puts "==============================="
+puts "Weclome to Ride Share Database"
+puts "==============================="
+
+
+# Invoke <print_output_per_driver> & <print_highest_value> method to print following data 
 puts "1. The number of rides each driver has given" # => 3,3,2,3
-puts hash_iterator(results[:number_of_rides], "rides")
+puts print_output_per_driver(results[:number_of_rides], "rides")
 puts "\n"
 
 puts "2. The total amount of money each driver has made" # => 85, 75, 55, 35
-puts hash_iterator(results[:total_money], "$")
+puts print_output_per_driver(results[:total_money], "$")
 puts "\n"
 
 puts "3. The average rating for each driver" # => 3, 3, 3.5, 4.7
-puts hash_iterator(results[:average_rating], "⭐️")
+puts print_output_per_driver(results[:average_rating], "⭐️")
 puts "\n"
 
-
-# Invoke <highest_value> method to print "most money" & "highest average rating."
 puts "4. Which driver made the most money?" # => Driver 1, $85.00
-puts highest_value(results[:total_money], "most money", "$")
+puts print_highest_value(results[:total_money], "most money", "$")
 puts "\n"
 
 puts "5. Which driver has the highest average rating?" # => Driver 4, ⭐️ 4.7
-puts highest_value(results[:average_rating], "highest average rating", "⭐️")
+puts print_highest_value(results[:average_rating], "highest average rating", "⭐️")
 puts "\n"
 
-
-# Iterate over <results[:most_money_made_date]> hash to get "highest earning date"
 puts "6. (Optional) For each driver, on which day did they make the most money?"
 # => Driver 1 / 5th Feb 2016 / $45.00
 # => Driver 2 / 5th Feb 2016 / $35.00
 # => Driver 3 / 5th Feb 2016 / $50.00 
 # => Driver 4 / 5th Feb 2016 / $20.00 
-
-results[:most_money_made_date].each do |driver_id, ride_info_arr|
-  date = ride_info_arr[0]
-  most_money = ride_info_arr[1]
-  puts "   Driver ##{driver_id[-1]} (#{driver_id}) - On #{date}, made the most money, $#{two_decimals(most_money)}. "
-end 
+puts print_output_per_driver(results[:highest_earning_date], "$")
+puts "\n"
 
 
 # <Output>
+# ===============================
+# Weclome to Ride Share Database
+# ===============================
 # 1. The number of rides each driver has given
 #    Driver #1 (DR0001) - 3 rides
 #    Driver #2 (DR0002) - 3 rides
@@ -249,8 +273,7 @@ end
 #    Driver #4 (DR0004) made the highest average rating, ⭐️ 4.7.
 
 # 6. (Optional) For each driver, on which day did they make the most money?
-#    Driver #1 (DR0001) - On 5th Feb 2016, made the most money, $45.00. 
-#    Driver #2 (DR0002) - On 5th Feb 2016, made the most money, $35.00. 
-#    Driver #3 (DR0003) - On 5th Feb 2016, made the most money, $50.00. 
-#    Driver #4 (DR0004) - On 5th Feb 2016, made the most money, $20.00. 
-
+#    Driver #1 (DR0001) - On 5th Feb 2016, made the most money, $45.00.
+#    Driver #2 (DR0002) - On 5th Feb 2016, made the most money, $35.00.
+#    Driver #3 (DR0003) - On 5th Feb 2016, made the most money, $50.00.
+#    Driver #4 (DR0004) - On 5th Feb 2016, made the most money, $20.00.
