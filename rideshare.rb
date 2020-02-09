@@ -67,26 +67,31 @@ def drivers_earnings(drivers_hash)
   end
   return earnings
 end
-earnings_hash = drivers_earnings(drivers)
+# {driver_id => earnings}
+earnings_hash = drivers_earnings(drivers) 
 # Which driver made the most money?
+# [driver_id, earnings]
 richest_driver = earnings_hash.max_by{ |driver_id, total| total}
 
 # The average rating for each driver
 def average_rating(drivers_hash)
-  rating_sum = {}
   rating_average = {}
   drivers_hash.each do |driver_id, trips|
-    rating_sum[driver_id] = trips.reduce(0) { |sum, trip| sum + trip[:rating] }
-    rating_average[driver_id] = rating_sum[driver_id] / trips.length.to_f
+    rating_sum = trips.sum { |trip| trip[:rating] }
+    rating_average[driver_id] = rating_sum / trips.length.to_f
   end
   return rating_average
 end
+# {driver_id => rating_average}
 ratings = average_rating(drivers)
 # Which driver has the highest average rating?
+# [driver_id, rating_average]
 highest_rated = ratings.max_by{ |driver_id, rating| rating}
 
 # For each driver, on which day did they make the most money?
+# {driver_id => {day => day_earnings}}
 earnings_by_each_trip = {}
+# {driver_id => [day, day_earnings] }
 best_day = {}
 drivers.each do |driver_id, trips_array|
   earnings_by_each_trip[driver_id] = trips_array.reduce({}) { |earnings_hash, day_info|
@@ -97,15 +102,15 @@ drivers.each do |driver_id, trips_array|
     end
     earnings_hash
 }
-  best_day[driver_id] = earnings_by_each_trip[driver_id].max_by { |day, earnings| earnings}
+  best_day[driver_id] = earnings_by_each_trip[driver_id].max_by { |day, earnings| earnings }
 end
 
-puts
+puts "----------------"
 rides_number(drivers).each do |driver_id, rides_count|
-  puts "A driver id #{driver_id} has given #{rides_count} rides, and has made #{earnings_hash[driver_id]}$. His average rating is %0.1f." % [ratings[driver_id]]
-  puts "The most money #{best_day[driver_id][1]}$ the driver made was on the #{best_day[driver_id][0]}."
+  puts "A driver #{driver_id} has given #{rides_count} rides, and has made #{earnings_hash[driver_id]}$. His average rating is %0.1f." % [ratings[driver_id]]
+  puts "This driver made the most money #{best_day[driver_id][1]}$ on the #{best_day[driver_id][0]}."
 end
 puts "----------------"
-puts "The driver with driver id #{richest_driver[0]} made the most money #{richest_driver[1]}$."
-puts "The driver with driver id #{highest_rated[0]} has the highest rating equal to %0.1f." % [highest_rated[1]]
+puts "The driver #{richest_driver[0]} made the most money #{richest_driver[1]}$."
+puts "The driver #{highest_rated[0]} has the highest rating equal to %0.1f." % [highest_rated[1]]
 
