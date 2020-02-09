@@ -144,7 +144,7 @@ end
 
 all_totals = Array.new
 
-all_rides.map do |driver, rides|
+all_rides.each do |driver, rides|
 	totals = { 
 		id: driver,
 		rides: rides.length, 
