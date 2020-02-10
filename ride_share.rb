@@ -6,7 +6,7 @@
 # Which layers are nested in each other?
 
 # Drivers (array) -> driver (hash) -> rides (array) -> ride (hash)
-# ( "->"" represents nesting)
+# ( "->" represents nesting)
 
 # Which layers of data "have" within it a different layer?
 
@@ -20,7 +20,6 @@
 # (within individual driver hashes)
 # Ride ID, date, rider ID, cost and rating are on the same layer.
 # (within individual ride hashes)
-
 
 ########################################################
 # Step 2: Assign a data structure to each layer
