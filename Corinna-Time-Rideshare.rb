@@ -54,8 +54,11 @@ end
 
 def prints_driver_comparisons(array)
   puts "Here's some information about the top drivers:"
+  # Stores the total income by driver and pulls using .max_by iterator
   highest_earner = array.max_by{|k| k[:income_for_comparison]} [:driver_name][0]
+  # Stores the average rating by driver and pulls using .max_by iterator
   highest_rating_received = array.max_by{|k| k[:highest_rating]} [:driver_name][0]
+  # Prints both highest driver statements
   puts "#{highest_earner} earned the most money."
   puts "#{highest_rating_received} received the highest rating."
   print "------------------------------------------"
@@ -63,6 +66,7 @@ end
 
 puts "Welcome to AdaTransport. Here are the stats for this week:"
 
+# Iterates through driver stats method and prints stats
 rides.each do |driver, details|
   puts prints_driver_stats(rides[driver])
 end
@@ -70,8 +74,10 @@ end
 # Which driver made the most money?
 # Which driver has the highest average rating?
 
+# Instantiates comparison array
 comparison_array = []
 
+# Iterates through driver stats and shovels comparison data into a new hash for easier stats comparison
 rides.each do |driver, details|
     comp_info = {
       driver_name: details[:name],
@@ -81,6 +87,7 @@ rides.each do |driver, details|
     comparison_array << comp_info
 end 
 
+# Iterates through comparisons method and prints stats
 prints_driver_comparisons(comparison_array)
 
 # [Optional] For each driver, on which day did they make the most money?
