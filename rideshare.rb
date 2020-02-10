@@ -185,15 +185,6 @@ def highest_rating(rides)
   return top_rating
 end
 
-def best_day(rides)
-
-  best_days = {}
-  rides.each do |driverid, rides|
-    rides_total = 0
-    rides.each do |riderid, ride|
-      ride
-
-
 driver_rides = num_rides(rides)
 driver_revenue = total_revenue(rides)
 driver_rating = average_rating(rides)
