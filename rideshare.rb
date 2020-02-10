@@ -26,120 +26,57 @@
 
 ## Solution
   ## 1 array (rides) with 11 hashes (ride), each with 5 keys (driver_id, ride_date, ride_cost, rider_id, ride_rating)
-  ## 3 hashes (drivers_ride, drivers_earnings, drivers_rating)
+  ## 1 hash (drivers) with a string key (driver) with a value that is a hash (driver_info) containing rides, earnings, ratings
 
 ########################################################
 # Step 3: Make the data structure!
 # Setup the entire data structure:
-# based off of the notes you have above, create the
-# and manually write in data presented in rides.csv
-# You should be copying and pasting the literal data
-# into this data structure, such as "DR0004"
-# and "3rd Feb 2016" and "RD0022"
 ########################################################
 
-# Create an array of hashes with all the information about the rides
-rides = [
-  {
-    driver_id:   "DR0004",
-    ride_date:   "3rd Feb 2016",
-    ride_cost:   5,
-    rider_id:    "RD0022",
-    ride_rating: 5
-  },
-  {
-    driver_id:   "DR0001",
-    ride_date:   "3rd Feb 2016,",
-    ride_cost:   10,
-    rider_id:    "RRD0003",
-    ride_rating: 3
-  },
-  {
-    driver_id:   "DR0002",
-    ride_date:   "3rd Feb 2016",
-    ride_cost:   25,
-    rider_id:    "RD0073",
-    ride_rating: 5
-  },
-  {
-    driver_id:   "DR0001",
-    ride_date:   "3rd Feb 2016",
-    ride_cost:   30,
-    rider_id:    "RD0015",
-    ride_rating: 4
-  },
-  {
-    driver_id:   "DR0003",
-    ride_date:   "4th Feb 2016",
-    ride_cost:   5,
-    rider_id:    "RD0066",
-    ride_rating: 5
-  },
-  {
-    driver_id:   "DR0004",
-    ride_date:   "4thFeb 2016",
-    ride_cost:   10,
-    rider_id:    "RD0022",
-    ride_rating: 4
-  },
-  {
-    driver_id:   "DR0002",
-    ride_date:   "4th Feb 2016",
-    ride_cost:   15,
-    rider_id:    "RD0013",
-    ride_rating: 1
-  },
-  {
-    driver_id:   "DR0003",
-    ride_date:   "5th Feb 2016",
-    ride_cost:   50,
-    rider_id:    "RD0003",
-    ride_rating: 2
-  },
-  {
-    driver_id:   "DR0002",
-    ride_date:   "5th Feb 2016",
-    ride_cost:   35,
-    rider_id:    "RD0066",
-    ride_rating: 3
-  },
-  {
-    driver_id:   "DR0004",
-    ride_date:   "5th Feb 2016",
-    ride_cost:   20,
-    rider_id:    "RD0073",
-    ride_rating: 5
-  },
-  {
-    driver_id:   "DR0001",
-    ride_date:   "5th Feb 2016",
-    ride_cost:   45,
-    rider_id:    "RD0003",
-    ride_rating: 2
-  }
-]
+# Function to get the average rating
+def get_average(total_rating, rides)
 
-# Create a hash with the drivers and how many rides they had
-drivers_ride = Hash.new(0) 
-rides.each do |ride|
-  driver = ride[:driver_id]
-  drivers_ride[driver] += 1
+  if rides > 0
+    average = total_rating.to_f / rides
+  else
+    average = 0
+  end
+  return average
+
 end
 
-# Create a hash with the drivers and how much money they made
-drivers_earnings = Hash.new(0) 
+# Create an array from the CSV file
+require "csv"
+rides = []
+CSV.open("rides.csv", 'r', headers: true).each do |ride_array|
+  ride_hash = Hash.new
+  ride_hash[:driver_id]   = ride_array[0]
+  ride_hash[:ride_date]   = ride_array[1]
+  ride_hash[:ride_cost]   = ride_array[2].to_f
+  ride_hash[:rider_id]    = ride_array[3]
+  ride_hash[:ride_rating] = ride_array[4].to_f
+  rides << ride_hash
+end
+
+# Create a hash for drivers with data from the rides
+drivers = Hash.new
 rides.each do |ride|
   driver = ride[:driver_id]
   cost   = ride[:ride_cost]
-  drivers_earnings[driver] += cost
-end
-
-# Create a hash with the drivers and their total rating
-drivers_rating = Hash.new(0) 
-rides.each do |ride|
-  driver = ride[:driver_id]
   rating = ride[:ride_rating]
-  drivers_rating[driver] += rating
+  
+# Create a hash for driver info if driver does not exist yet
+  if !drivers.key?(driver)
+    driver_info = Hash.new
+    driver_info[:rides]    = 0
+    driver_info[:earnings] = 0
+    driver_info[:ratings]  = 0
+    drivers[driver]        = driver_info
+  end
+
+  drivers[driver][:rides]    += 1
+  drivers[driver][:earnings] += cost
+  drivers[driver][:ratings]  += rating
 end
 
 #########################################################
@@ -148,40 +85,47 @@ end
 #########################################################
 
 # 1. Number of rides each driver has given
-drivers_ride.each do |driver, rides|
-  puts "The driver #{driver} had #{rides} ride(s)."
+drivers.each do |driver, driver_info|
+  puts "The driver #{driver} had #{driver_info[:rides]} ride(s)."
 end
 
 # 2. Total amount of money each driver has made
-drivers_earnings.each do |driver, earnings|
-  puts "The driver #{driver} made $#{earnings}."
+drivers.each do |driver, driver_info|
+  puts "The driver #{driver} made $%.2f." % [driver_info[:earnings]]
 end
 
 # 3. Average rating for each driver
-drivers_rating.each do |driver, rating|
-  average = rating.to_f / drivers_ride[driver]
+drivers.each do |driver, driver_info|
+  average = get_average(driver_info[:ratings], driver_info[:rides])
   puts "The driver #{driver} has an average rating of %.2f." % [average]
 end
 
-# 4. Which driver made the most money?
-most_driver = ""
-most_cost   = 0
-drivers_earnings.each do |driver, cost|
-  if cost > most_cost
-    most_cost   = cost
-    most_driver = driver
+# 4. Which drivers made the most money? (handles ties)
+most_earnings  = 0
+drivers.each do |driver, driver_info|
+  if driver_info[:earnings] > most_earnings
+    most_earnings = driver_info[:earnings]
   end
 end
-puts "The driver that made the most money was #{most_driver}."
+puts "The drivers that made the most money were:"
+drivers.each do |driver, driver_info|
+  if driver_info[:earnings] == most_earnings
+    puts "- #{driver}"
+  end
+end
 
-# 5. Which driver has the highest average rating?
-most_driver  = ""
-most_average = 0
-drivers_rating.each do |driver, rating|
-  average = rating.to_f / drivers_ride[driver]
+# 5. Which drivers had the highest average rating? (handles ties)
+most_average  = 0
+drivers.each do |driver, driver_info|
+  average = get_average(driver_info[:ratings], driver_info[:rides])
   if average > most_average
     most_average = average
-    most_driver  = driver
   end
 end
-puts "The driver that had the highest average rating was #{most_driver}."
+puts "The drivers with the highest average rating were:"
+drivers.each do |driver, driver_info|
+  average = get_average(driver_info[:ratings], driver_info[:rides])
+  if average == most_average
+    puts "- #{driver}"
+  end
+end
