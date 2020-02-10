@@ -89,11 +89,11 @@ end
 $money_per_driver = {}
 # To calculate the total money per driver.
 def driver_total_money (trips)
-  trips.each_pair do |key, product|
-    total_cost = product.map{ |p| p[:cost]}
+  trips.map do |driver_id, trip|
+    total_cost = trip.map{ |p| p[:cost]}
     sum = total_cost.inject(:+)
-    $money_per_driver[key] = sum
-    puts "#{key}: #{sum}"
+    $money_per_driver[driver_id] = sum
+    puts "#{driver_id}: #{sum}"
   end
   return $money_per_driver
 end
@@ -101,12 +101,12 @@ end
 $rating_per_driver = {}
 # Method to calculate the average of rating per driver.
 def driver_average (trips)
-  trips.each_pair do |key, product|
-    total_cost = product.map{ |p| p[:rating]}
+  trips.map do |driver_id, trip|
+    total_cost = trip.map{ |p| p[:rating]}
     sum = total_cost.inject(:+)
     average = sum.to_f / total_cost.size
-    $rating_per_driver[key] = average
-    puts "#{key}: #{average.round(2)}"
+    $rating_per_driver[driver_id] = average
+    puts "#{driver_id}: #{average.round(2)}"
   end
   return $rating_per_driver
 end
@@ -121,6 +121,7 @@ def largest_hash_key(hash)
 end
 
 # Print out the infomation and invoking the methdos.
+puts "\n"
 puts "🚗 ----Total Driver's Earnings and Number of Rides--- 🚗"
 puts "\n"
 puts "- The number of rides each driver has given: -"
