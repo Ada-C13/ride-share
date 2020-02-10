@@ -38,7 +38,7 @@
 # and "3rd Feb 2016" and "RD0022"
 ########################################################
 
-# Create a hash with all the information about the rides
+# Create an array of hashes with all the information about the rides
 rides = [
   {
     driver_id:   "DR0004",
