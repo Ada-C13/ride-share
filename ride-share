@@ -1,0 +1,147 @@
+########################################################
+# Step 1: Establish the layers
+
+# In this section of the file, as a series of comments,
+# create a list of the layers you identify.
+# Which layers are nested in each other?
+# Which layers of data "have" within it a different layer?
+# Which layers are "next" to each other?
+
+########################################################
+# Step 2: Assign a data structure to each layer
+
+# Copy your list from above, and in this section
+# determine what data structure each layer should have
+
+########################################################
+# Step 3: Make the data structure!
+
+# Setup the entire data structure:
+# based off of the notes you have above, create the
+# and manually write in data presented in rides.csv
+# You should be copying and pasting the literal data
+# into this data structure, such as "DR0004"
+# and "3rd Feb 2016" and "RD0022"
+
+########################################################
+# Step 4: Total Driver's Earnings and Number of Rides
+
+# Use an iteration blocks to print the following answers:
+# - the number of rides each driver has given
+# - the total amount of money each driver has made
+# - the average rating for each driver
+# - Which driver made the most money?
+# - Which driver has the highest average rating?
+
+driver_data = [ { "DR0001"=> { "ride1"=> {"date"=> "3rd Feb 2016",
+                                          "cost"=> 10,
+                                          "riderid"=> "RD0003",
+                                          "rating"=> 3},
+                               "ride2"=> {"date"=> "3th Feb 2016",
+                                          "cost"=> 30,
+                                          "riderid"=> "RD0015",
+                                          "rating"=> 4},
+                               "ride3"=> {"date"=> "5th Feb 2016",
+                                          "cost"=> 45,
+                                          "riderid"=> "RD0003",
+                                          "rating"=> 2}},
+                  "DR0002"=> { "ride1"=> {"date"=> "3rd Feb 2016",
+                                          "cost"=> 25,
+                                          "riderid"=> "RD0073", 
+                                          "rating"=> 5},
+                               "ride2"=>{"date"=> "4th Feb 2016",
+                                         "cost"=> 15,
+                                         "riderid"=> "RD0013",
+                                         "rating"=> 1},
+                               "ride3"=> {"date"=> "5th Feb 2016",
+                                          "cost"=>35,
+                                          "riderid"=> "RD0066",
+                                          "rating"=> 3}},
+                  "DR0003"=> { "ride1"=>{"date"=> "4th Feb 2016",
+                                         "cost"=> 5,
+                                         "riderid"=> "RD0066",
+                                         "rating"=> 5},
+                               "ride2"=> {"date"=> "5th Feb 2016",
+                                          "cost"=>50,
+                                          "riderid"=> "RD0003",
+                                          "rating"=> 2}},
+                  "DR0004"=> { "ride1"=> {"date"=> "3rd Feb 2016",
+                                          "cost"=> 5,
+                                          "riderid"=> "RD0022",
+                                          "rating"=> 5},
+                               "ride2"=>{"date"=> "4th Feb 2016",
+                                         "cost"=> 10,
+                                         "riderid"=> "RD0022",
+                                         "rating"=> 4},
+                               "ride3"=> {"date"=> "5th Feb 2016",
+                                          "cost"=>20,
+                                          "riderid"=> "RD0073",
+                                          "rating"=> 5}}}]
+
+
+
+#the number of rides for each driver
+def number_of_rides (arr) 
+number_of_rides = []
+ arr.each do |drivertrip|
+number_of_rides = drivertrip.map { |k, v| [k, v.count] }.to_h 
+
+
+end
+return number_of_rides
+end
+
+number_of_rides = number_of_rides(driver_data)
+puts number_of_rides
+
+
+#how much did each driver make
+#to solve this part I decided to write a method that exracts the total of any key of the most inner hash for each driver.
+# i.e "cost" or "rating" 
+
+#this method takes the main array and returns a hash of the totals of any of the inner hash keys for each driver
+def total_list (arr,s)
+total_nums = {}
+arr.each do |driversid|
+ driver =0
+  driversid.each do |driverstrips,info| 
+    total = 0
+    driver +=1
+    info.each do |k,v| 
+      total += v[s]
+    end
+
+    total_nums["DR000#{driver}"] = total
+    
+    end    
+  end
+  return total_nums
+end
+
+total_costs = total_list(driver_data,"cost")
+
+total_rating = (total_list(driver_data,"rating"))
+
+
+#to transorm the hash returned from the total_list method , which provides the total sum of the deepest nested has for each driver to the avarage
+def total_to_average (arr,arr2)
+driver = 0
+arr.each do |k,v|
+  driver +=1
+  arr[k] = (v*1.0/(arr2["DR000#{driver}"])).round(2) #to display 2 decimal points only
+ end
+ return arr
+end
+
+average_rating = (total_to_average(total_rating,number_of_rides))
+
+#print out results
+puts "Each driver made: #{total_costs}"
+puts "Drivers average_rating: #{average_rating}"
+
+
+# - Which driver made the most money?
+  puts "the driver that made most is: #{total_costs.max_by{|k,v| v} }"
+
+# - Which driver has the highest average rating?
+  puts "the driver with the highest rating is: #{average_rating.max_by{|k,v| v}}"
