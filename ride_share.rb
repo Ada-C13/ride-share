@@ -43,11 +43,11 @@ end
 # Calculates highest earner
 def highest_earner(drivers_par)
   max_earned = 0.0
-  winner = ""
+  winner = []
   total_earnings(drivers_par).map do |id, earnings|
     if earnings > max_earned
       max_earned = earnings
-      winner = id
+      winner = [id, earnings]
     end
   end
   return winner
@@ -56,11 +56,11 @@ end
 # Calculates highest rating
 def best_rating(drivers_par)
   max_rating = 0.0
-  best_driver = ""
+  best_driver = []
   average_ratings(drivers_par).map do |id, rating|
     if rating > max_rating
       max_rating = rating
-      best_driver = id
+      best_driver = [id, rating.round(1)]
     end
   end
   return best_driver
@@ -165,17 +165,17 @@ puts "\n****************"
 puts "Average ratings:"
 puts "****************"
 average_ratings(drivers).each do |id, rating|
-  puts "Driver #{id}'s average rating is #{("%.2f") % rating}."
+  puts "Driver #{id}'s average rating is #{rating.round(1)}."
 end
 
 # Displays which driver made the most money
 puts "\n***************"
 puts "Highest Earner:"
 puts "***************"
-puts "Driver #{highest_earner(drivers)} made the most money."
+puts "Driver #{highest_earner(drivers)[0]} made the most money.  They made $#{highest_earner(drivers)[1]}."
 
 # Displays which driver has the highest rating
 puts "\n***************"
 puts "Highest rating:"
 puts "***************"
-puts "Driver #{best_rating(drivers)} had the highest average rating."
+puts "Driver #{best_rating(drivers)[0]} had the highest average rating.  Their rating is #{best_rating(drivers)[1]}."
