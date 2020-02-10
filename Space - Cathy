@@ -1,0 +1,147 @@
+# create drivers {hash} as a single variable data structure
+# each driver id is a key in the hash while the value is an [array] that holds each ride info in a {hash}
+
+drivers = {
+  "DR0001": [
+    {
+      :date => "3rd Feb 2016",
+      :cost => 10,
+      :rider_id => "RD0003",
+      :rating => 3
+    },
+    {
+      :date => "3rd Feb 2016",
+      :cost => 30,
+      :rider_id => "RD0015",
+      :rating => 4
+    },
+    {
+      :date => "5th Feb 2016",
+      :cost => 45,
+      :rider_id => "RD0003",
+      :rating => 2
+    }
+  ], 
+  "DR0002": [
+    {
+      :date => "3rd Feb 2016",
+      :cost => 25,
+      :rider_id => "RD0073",
+      :rating => 5
+    },
+    {
+      :date => "4th Feb 2016",
+      :cost => 15,
+      :rider_id => "RD0013",
+      :rating => 1
+    },
+    {
+      :date => "5th Feb 2016",
+      :cost => 35,
+      :rider_id => "RD0066",
+      :rating => 3
+    }
+  ], 
+  "DR0003": [
+    {
+      :date => "4th Feb 2016",
+      :cost => 5,
+      :rider_id => "RD0066",
+      :rating => 5
+    },
+    {
+      :date => "5th Feb 2016",
+      :cost => 50,
+      :rider_id => "RD0003",
+      :rating => 2
+    }
+  ],
+  "DR0004": [
+    {
+      :date => "3rd Feb 2016",
+      :cost => 5,
+      :rider_id => "RD0022",
+      :rating => 5 
+    },
+    {
+      :date => "4th Feb 2016",
+      :cost => 10,
+      :rider_id => "RD0022",
+      :rating => 4
+    },
+    {
+      :date => "5th Feb 2016",
+      :cost => 20,
+      :rider_id => "RD0073",
+      :rating => 5
+    }
+  ]
+}
+
+# create a method to organize and generate calculation into a new set of array
+# this method creates an array of hashes that includes driver id, total rides, total cost, average rating per driver
+def get_organized_data(hash_entered)
+  data_per_driver = []    
+
+  hash_entered.each do |driver, rides|
+    cost_sum = 0
+    rating_sum = 0.0
+
+    rides.each do |ride|
+      cost_sum += ride[:cost]
+      rating_sum += ride[:rating]
+    end
+
+    data_per_driver << {:driver_id => driver, :total_rides => rides.length, :total_money => cost_sum, :avg_rating => (rating_sum/rides.length).round(1)}
+  end
+
+  return data_per_driver
+end
+
+# create a method to sum up money made each day per driver and get the date they made the most money
+def get_max_money_date(array_entered)
+  daily = {}
+
+  array_entered.each do |ride|
+    if daily.key?(ride[:date]) == false
+      daily[ride[:date]] = 0
+    end
+
+    daily[ride[:date]] += ride[:cost]
+  end
+
+  max_money_day = nil
+  max_daily_sum = 0
+
+  daily.each do |date, money|
+    if money >= max_daily_sum
+      max_daily_sum = money
+      max_money_day = date
+    end
+  end
+
+  return max_money_day
+end
+
+# call method and store into a variable
+organized_data = get_organized_data(drivers)
+
+# output data using forementioned variable and an iterator 
+organized_data.length.times do |i|
+  puts "Driver #{organized_data[i][:driver_id]} has given a total of #{organized_data[i][:total_rides]} rides"
+  puts "Driver #{organized_data[i][:driver_id]} has made a total of $#{organized_data[i][:total_money]}"
+  puts "Driver #{organized_data[i][:driver_id]} has an average rating of #{organized_data[i][:avg_rating]}"
+end
+
+# find which driver made the most money using an enumerable and generate result
+max_money = organized_data.max_by{|each_hash| each_hash[:total_money]}
+puts "The driver that made the most money with $#{max_money[:total_money]} is #{max_money[:driver_id]}"
+
+# find which driver had highest rating using an enumerable and generate result
+max_rating = organized_data.max_by{|each_hash| each_hash[:avg_rating]}
+puts "The driver that has the highest average rating of #{max_rating[:avg_rating]} is #{max_rating[:driver_id]}"
+
+# call method and use a loop to output which date each driver made the most money
+drivers.each do |driver, rides|
+  puts "#{driver} made the most money on #{get_max_money_date(rides)}"
+end
