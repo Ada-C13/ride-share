@@ -1,3 +1,6 @@
+require 'awesome_print'
+require 'chronic'
+
 ########################################################
 # Step 1: Establish the layers
 
@@ -142,20 +145,17 @@ def highest(array, key)
 	return element_with_max_value
 end
 
-all_totals = Array.new
-
-all_rides.each do |driver, rides|
+all_totals = all_rides.map do |driver, rides|
 	totals = { 
 		id: driver,
 		rides: rides.length, 
 		earnings: each_driver(rides, :cost).sum,
-		avg_rating: each_driver(rides, :rating).sum(0.0) / rides.length
+		avg_rating: each_driver(rides, :rating).sum(0.0) / rides.length,
+		highest_earning: highest(rides, :cost)[:cost],
+		highest_earning_date: Chronic.parse(highest(rides, :cost)[:date])
 	}
-	all_totals << totals
-	
-	highest_earning = highest(rides, :cost)
-	
-	puts "Driver ID: #{totals[:id]} \nNo. of Rides: #{totals[:rides]} \nTotal Earnings: $#{"%.2f" % totals[:earnings]} \nAverage Rating: #{"%.1f" % totals[:avg_rating]} \nDate of Highest Earning: $#{"%.2f" % highest_earning[:cost]} on #{highest_earning[:date]} \n\n"
+
+	ap totals, plain: false, multiline: true, color: {integer: :green, float: :purple, time: :blue}
 end
 
 highest_earner = highest(all_totals, :earnings)
