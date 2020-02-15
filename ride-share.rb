@@ -1,5 +1,6 @@
 driver_info = [
-      { driver_id: "DR0001",
+      { 
+        driver_id: "DR0001",
         trips: [
           {
             date: "3rd Feb 2016",
