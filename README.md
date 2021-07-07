@@ -1,9 +1,5 @@
-# Work with Ride Share Data using Arrays and Hashes
-
-## At a Glance
-
-- Individual, [stage 1](https://github.com/Ada-Developers-Academy/pedagogy/blob/master/classroom/rule-of-three.md#stage-1) project
-- Due before class, **Mon, Feb 10** (Review [how to turn in projects](https://github.com/Ada-Developers-Academy/textbook-curriculum/blob/master/00-programming-fundamentals/project-submissions-without-git.md) )
+[Link to Heroku page](https://ride-share-rails-ada.herokuapp.com/)
+<img width="1437" alt="Screen Shot 2021-03-02 at 2 14 31 PM" src="https://user-images.githubusercontent.com/26889152/109722555-b4c84500-7b61-11eb-9404-5a4a3ea7caf0.png">
 
 ## Introduction
 
